@@ -1,6 +1,6 @@
-import { User } from '../models/user.model';
+import { User } from '../entities/user';
 
-export interface UserRepository {
+export interface IUserRepository {
   findAll(): Promise<User[]>;
   findById(id: string): Promise<User | null>;
   create(user: User): Promise<User>;

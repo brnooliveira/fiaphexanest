@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { UserRepository } from '../../core/domain/interfaces/user-repository.interface';
-import { User } from '../../core/domain/models/user.model';
+import { IUserRepository } from '../../../core/domain/repositories/user-repository.interface';
+import { User } from '../../../core/domain/entities/user';
 
 @Injectable()
-export class PrismaUserRepository implements UserRepository {
+export class UserRepository implements IUserRepository {
   private prisma: PrismaClient;
 
   constructor() {

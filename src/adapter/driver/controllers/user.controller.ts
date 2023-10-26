@@ -13,18 +13,15 @@ import {
   ApiResponse as ApiResponseDecorator,
   ApiTags,
 } from '@nestjs/swagger';
+import { CreateUserDto, UpdateUserDto } from 'src/core/application/dtos/user.dto';
+import { UserUseCase } from 'src/core/application/use-cases/user-use-case';
 
-import {
-  CreateUserDto,
-  UpdateUserDto,
-} from 'src/users/core/application/dtos/user.dto';
-import { UserService } from 'src/users/core/application/services/user.service';
-import { User } from 'src/users/core/domain/models/user.model';
+import { User } from 'src/core/domain/entities/user';
 
 @ApiTags('users')
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserUseCase) {}
 
   @Get()
   findAll(): Promise<User[]> {

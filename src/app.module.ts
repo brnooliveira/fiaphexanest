@@ -1,26 +1,16 @@
 import { Module } from '@nestjs/common';
-import { CourseController } from './infrastructure/api/controllers/course.controller';
-import { CourseService } from './core/application/services/course.service';
-import { PrismaCourseRepository } from './infrastructure/repositories/prisma-course.repository';
-import { UsersModule } from './users/users.module';
-import { UserService } from './users/core/application/services/user.service';
-import { PrismaUserRepository } from './users/infrastructure/repositories/prisma-user.repository';
-import { UserController } from './users/infrastructure/api/user.controller';
+import { UserController } from './adapter/driver/controllers/user.controller';
+import { UserUseCase } from './core/application/use-cases/user-use-case';
+import { UserRepository } from './adapter/driven/repositories/prisma-user.repository';
 
 @Module({
-  imports: [UsersModule],
-  controllers: [CourseController, UserController],
+  controllers: [UserController],
   providers: [
-    CourseService,
-    UserService,
-    {
-      provide: 'CourseRepository',
-      useClass: PrismaCourseRepository,
-    },
+    UserUseCase,
     {
       provide: 'UserRepository',
-      useClass: PrismaUserRepository,
+      useClass: UserRepository,
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
