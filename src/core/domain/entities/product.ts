@@ -2,12 +2,12 @@ import { ProductCategory } from "../value-objects/product-category";
 import { ProductImage } from "./product-image";
 
 export class Product {
-  private id: string;
-  private name: string;
-  private productCategory: ProductCategory;
-  private price: number;
-  private description: string;
-  private images: ProductImage[];
+  public readonly id: string;
+  public readonly name: string;
+  public readonly productCategory: ProductCategory;
+  public readonly price: number;
+  public readonly description: string;
+  public readonly images: ProductImage[];
 
   constructor($id: string, $name: string, $productCategory: ProductCategory, $price: number, $description: string, $images: ProductImage[]) {
     this.id = $id;

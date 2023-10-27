@@ -1,4 +1,5 @@
 export enum OrderStatus {
+  WAITING_PAYMENT,
   RECEIVED,
   PREPARING,
   READY,

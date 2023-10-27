@@ -21,7 +21,7 @@ model User {
 
 model Order {
   id           String        @id @unique @default(uuid())
-  orderStatus  OrderStatus   @default(RECEIVED) @map("order_status")
+  orderStatus  OrderStatus   @default(WAITING_PAYMENT) @map("order_status")
   products     Product[]
   orderPayment OrderPayment?
   date         DateTime
@@ -66,6 +66,7 @@ enum ProductCategory {
 }
 
 enum OrderStatus {
+  WAITING_PAYMENT
   RECEIVED
   PREPARING
   READY
