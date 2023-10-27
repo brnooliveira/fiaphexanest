@@ -1,4 +1,4 @@
-export enum OrderItemCategory {
+export enum ProductCategory {
   MEAL,
   SIDE_DISH,
   DRINK,
