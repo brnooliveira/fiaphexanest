@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { User } from 'src/core/domain/entities/user';
-import { IUserRepository } from 'src/core/domain/repositories/user-repository.interface';
+import { User } from '../../../core/domain/entities/user';
+import { IUserRepository } from '../../../core/domain/repositories/user-repository.interface';
+import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 
 @Injectable()
 export class UserUseCase {
   constructor(
     @Inject('UserRepository') private readonly userRepository: IUserRepository,
-  ) {}
+  ) { }
 
   async findAll(): Promise<User[]> {
     return this.userRepository.findAll();
@@ -16,12 +17,12 @@ export class UserUseCase {
     return this.userRepository.findById(id);
   }
 
-  async create(user: User): Promise<User> {
-    return this.userRepository.create(user);
+  async create(createUserDTO: CreateUserDto): Promise<User> {
+    return this.userRepository.create(createUserDTO);
   }
 
-  async update(id: string, user: User): Promise<User> {
-    return this.userRepository.update(id, user);
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    return this.userRepository.update(id, updateUserDto);
   }
 
   async delete(id: string): Promise<void> {

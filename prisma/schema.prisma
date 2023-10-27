@@ -11,9 +11,58 @@ datasource db {
 }
 
 model User {
-  id   String @id @unique @default(uuid())
-  name String
-  cpf  String @unique
+  id    String @id @unique @default(uuid())
+  name  String
+  cpf   String @unique
+  email String
 
   @@map("user")
+}
+
+model Order {
+  id          String      @id @unique @default(uuid())
+  orderStatus OrderStatus @default(RECEIVED) @map("order_status")
+  products    Product[]
+  payment     Payment?
+
+  @@map("order")
+}
+
+model Product {
+  id              String          @id @unique @default(uuid())
+  name            String
+  description     String
+  price           Decimal
+  productCategory ProductCategory @map("product_category")
+  Order           Order[]
+
+  @@map("product")
+}
+
+model Payment {
+  id            String        @id @unique @default(uuid())
+  paymentStatus PaymentStatus @default(PENDING) @map("payment_status")
+  orderId       String        @unique @map("order_id")
+  order         Order         @relation(fields: [orderId], references: [id])
+
+  @@map("payment")
+}
+
+enum ProductCategory {
+  MEAL
+  SIDE_DISH
+  DRINK
+  DESSERT
+}
+
+enum OrderStatus {
+  RECEIVED
+  PREPARING
+  READY
+  FINISHED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
 }

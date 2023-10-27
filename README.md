@@ -1,13 +1,18 @@
 ## First run
 
-Create a .env file in the root of the project:
-
-```file
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:PORT/database?schema=public"
+### Database
+You can use the database/Dockerfile to bring up a postgres container:
+```bash
+$ docker build .
+$ docker run --name db -p 5433:5432 IMAGE_ID
 ```
 
+### Env
+Create a .env file in the root of the project:
+```file
+DATABASE_URL="postgresql://postgres:fiap123@localhost:5433/fiap?schema=public"
+```
 After that,
-
 ```bash
 $ npm install
 $ npx prisma generate

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './adapter/driver/controllers/user.controller';
 import { UserUseCase } from './core/application/use-cases/user-use-case';
-import { UserRepository } from './adapter/driven/repositories/prisma-user.repository';
+import { UserRepository } from './adapter/driven/repositories/user.repository';
 
 @Module({
   controllers: [UserController],

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { IUserRepository } from '../../../core/domain/repositories/user-repository.interface';
 import { User } from '../../../core/domain/entities/user';
+import { CreateUserDto, UpdateUserDto } from '../../../core/application/dtos/user.dto';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -19,11 +20,12 @@ export class UserRepository implements IUserRepository {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  async create(user: User): Promise<User> {
-    return this.prisma.user.create({ data: user });
+  async create(createUserDTO: CreateUserDto): Promise<User> {
+    console.log("opa", createUserDTO)
+    return this.prisma.user.create({ data: createUserDTO });
   }
 
-  async update(id: string, user: User): Promise<User> {
+  async update(id: string, user: UpdateUserDto): Promise<User> {
     return this.prisma.user.update({
       where: { id: id },
       data: user,
