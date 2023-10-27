@@ -16,6 +16,10 @@ export class UserUseCase {
   async findById(id: string): Promise<User | null> {
     return this.userRepository.findById(id);
   }
+
+  async findByCpf(cpf: string): Promise<User | null> {
+    return this.userRepository.findByCpf(cpf);
+  }
   
   async create(createUserDTO: CreateUserDto): Promise<User> {
     return this.userRepository.create(createUserDTO);

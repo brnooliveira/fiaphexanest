@@ -11,6 +11,9 @@ export class UserRepository implements IUserRepository {
   constructor() {
     this.prisma = new PrismaClient();
   }
+  findByCpf(cpf: string): Promise<User> {
+    return this.prisma.user.findUnique({ where: { cpf } });
+  }
 
   async findAll(): Promise<User[]> {
     return this.prisma.user.findMany();

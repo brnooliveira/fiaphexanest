@@ -33,6 +33,11 @@ export class UserController {
     return this.userUseCase.findById(id);
   }
 
+  @Get('cpf/:cpf')
+  findByCpf(@Param('cpf') cpf: string): Promise<User | null> {
+    return this.userUseCase.findByCpf(cpf);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Cria um novo usuário' })
   @ApiResponseDecorator({
