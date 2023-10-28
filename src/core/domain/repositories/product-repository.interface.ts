@@ -1,13 +1,13 @@
-import { Product } from 'src/core/domain/entities/product';
-import { ProductImage } from 'src/core/domain/entities/product-image';
-import { ProductCategory } from 'src/core/domain/value-objects/product-category';
-import { CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
+import { Product } from '../entities/product';
+import { ProductCategory } from '@prisma/client';
+import { ProductImage } from '../entities/product-image';
+import { CreateProductDto, UpdateProductDto } from 'src/core/application/dtos/product.dto';
 
-export interface IProductUseCase {
+export interface IProductRepository {
   findAll(): Promise<Product[]>;
   findById(id: string): Promise<Product | null>;
   findByCategory(productCategory: ProductCategory): Promise<Product>;
-  create(createProductDTO: CreateProductDto): Promise<Product>;
+  create(createProductDto: CreateProductDto): Promise<Product>;
   update(id: string, updateProductDto: UpdateProductDto): Promise<Product>;
   delete(id: string): Promise<void>;
   listImages(): Promise<ProductImage[]>;

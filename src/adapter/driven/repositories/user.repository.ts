@@ -23,14 +23,14 @@ export class UserRepository implements IUserRepository {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  async create(createUserDTO: CreateUserDto): Promise<User> {
-    return this.prisma.user.create({ data: createUserDTO });
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    return this.prisma.user.create({ data: createUserDto });
   }
 
-  async update(id: string, user: UpdateUserDto): Promise<User> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     return this.prisma.user.update({
       where: { id: id },
-      data: user,
+      data: updateUserDto,
     });
   }
 
