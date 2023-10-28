@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  database:
+    image: postgres:16.0-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: fiap123
+      POSTGRES_DB: fiap
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app.dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://postgres:fiap123@database:5432/fiap?schema=public"
+    depends_on:
+      - database
+      - migrations
+    restart: on-failure
+  migrations:
+    build:
+      context: .
+      dockerfile: ./docker/app.dockerfile
+      target: prisma-migrate
+    entrypoint: ["npx", "prisma", "db", "push"]
+    depends_on:
+      - database
+    restart: on-failure
+    environment:
+      DATABASE_URL: "postgresql://postgres:fiap123@database:5432/fiap?schema=public"
+    #web:
+  #  image: nginx

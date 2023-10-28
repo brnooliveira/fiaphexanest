@@ -1,45 +1,15 @@
-## First run
+## Execução
 
-### Database
-You can use the database/Dockerfile to bring up a postgres container:
-```bash
-$ docker build .
-$ docker run --name db -p 5433:5432 IMAGE_ID
-```
+Para executar o projeto, certifique-se que você possui Docker instalado e atualizado.
 
-### Env
-Create a .env file in the root of the project:
-```file
-DATABASE_URL="postgresql://postgres:fiap123@localhost:5433/fiap?schema=public"
-```
-After that,
-```bash
-$ npm install
-$ npx prisma generate
-```
-
-## Running the app
+Para executar o projeto em modo de produção, execute:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker compose up -d
 ```
 
-## Test
+Para executar o projeto em modo de desenvolvimento, permitindo a alteração em tempo real dos arquivos:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose -f docker-compose.yaml -f docker-compose.override.dev.yaml up -d
 ```
