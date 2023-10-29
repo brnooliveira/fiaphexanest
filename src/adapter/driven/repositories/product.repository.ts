@@ -15,15 +15,38 @@ export class ProductRepository implements IProductRepository {
   }
 
   async findAll(): Promise<Product[]> {
-    const res = await this.prisma.product.findMany({ include: { productImages: true } });
+    const products = await this.prisma.product.findMany({ include: { productImages: true } });
 
-    return res.map(res => new Product(res.id, res.name, res.productCategory, res.price.toNumber(), res.description, res.productImages));
+    return products.map((product) => {
+      const productImages = product.productImages.map((image) => new ProductImage(image.path, product.id, image.id));
+      return new Product(
+        product.id,
+        product.name,
+        product.productCategory as ProductCategory,
+        +product.price,
+        product.description,
+        productImages,
+      );
+    });
   }
 
   async findById(id: string): Promise<Product | null> {
-    const res = await this.prisma.product.findUnique({ where: { id }, include: { productImages: true } });
+    const product = await this.prisma.product.findUnique({ where: { id }, include: { productImages: true } });
 
-    return new Product(res.id, res.name, res.productCategory, res.price.toNumber(), res.description, res.productImages);
+    if (!product) {
+      return null;
+    }
+
+    const productImages = product.productImages.map((image) => new ProductImage(image.path, product.id, image.id));
+
+    return new Product(
+      product.id,
+      product.name,
+      product.productCategory as ProductCategory,
+      +product.price,
+      product.description,
+      productImages,
+    );
   }
 
   async create(createProductDTO: CreateProductDto): Promise<Product> {
@@ -46,9 +69,22 @@ export class ProductRepository implements IProductRepository {
   }
 
   async findByCategory(productCategory: ProductCategory): Promise<Product[]> {
-    const res = await this.prisma.product.findMany({ where: { productCategory: productCategory }, include: { productImages: true } });
+    const products = await this.prisma.product.findMany({
+      where: { productCategory: productCategory },
+      include: { productImages: true },
+    });
 
-    return res.map(res => new Product(res.id, res.name, res.productCategory, res.price.toNumber(), res.description, res.productImages));
+    return products.map((product) => {
+      const productImages = product.productImages.map((image) => new ProductImage(image.path, product.id, image.id));
+      return new Product(
+        product.id,
+        product.name,
+        product.productCategory as ProductCategory,
+        +product.price,
+        product.description,
+        productImages,
+      );
+    });
   }
 
   async addImages(addProductImageDtos: AddProductImageDto[]): Promise<boolean> {
@@ -61,10 +97,15 @@ export class ProductRepository implements IProductRepository {
   }
 
   async removeImages(ids: string[]): Promise<ProductImage[]> {
+    const images = await this.prisma.productImage.findMany({
+      where: { id: { in: ids } },
+    });
 
-    const res = await this.prisma.productImage.findMany({ where: { id: { in: ids } } });
-    await this.prisma.productImage.deleteMany({ where: { id: { in: ids } } });
-    
-    return res.map(res => new ProductImage(res.path, res.productId, res.id));
+    await this.prisma.productImage.deleteMany({
+      where: { id: { in: ids } },
+    });
+
+    return images.map((image) => new ProductImage(image.path, image.productId, image.id));
   }
 }
+

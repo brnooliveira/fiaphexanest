@@ -42,18 +42,19 @@ model Product {
 }
 
 model OrderPayment {
-  id            String             @id @unique @default(uuid())
+  id                 String             @id @unique @default(uuid())
   orderPaymentStatus OrderPaymentStatus @default(PENDING) @map("order_payment_status")
-  orderId       String             @unique @map("order_id")
-  order         Order              @relation(fields: [orderId], references: [id])
+  orderId            String             @unique @map("order_id")
+  order              Order              @relation(fields: [orderId], references: [id])
 
   @@map("order_payment")
 }
 
 model ProductImage {
-  id       String    @id @unique @default(uuid())
-  path     String
-  products Product[]
+  id        String  @id @unique @default(uuid())
+  path      String
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
 
   @@map("product_image")
 }
