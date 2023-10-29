@@ -1,7 +1,8 @@
 import { Product } from '../entities/product';
 import { AddProductImageDto, CreateProductDto, UpdateProductDto } from 'src/core/application/dtos/product.dto';
 import { ProductCategory } from '../value-objects/product-category';
-import { ProductImage } from '@prisma/client';
+import { ProductImage } from '../entities/product-image';
+
 
 export interface IProductRepository {
   findAll(): Promise<Product[]>;
