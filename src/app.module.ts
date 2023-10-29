@@ -8,6 +8,9 @@ import { ProductUseCase } from './core/application/use-cases/product-use-case';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthenticationController } from './adapter/driver/controllers/authentication.controller';
+import { OrderController } from './adapter/driver/controllers/order.controller';
+import { OrderUseCase } from './core/application/use-cases/order-use-case';
+import { OrderRepository } from './adapter/driven/repositories/order.repository';
 
 /*
 JwtModule.register({
@@ -17,7 +20,7 @@ JwtModule.register({
     }),
 */
 @Module({
-  controllers: [UserController, ProductController, AuthenticationController],
+  controllers: [OrderController, UserController, ProductController, AuthenticationController],
   imports: [
     ConfigModule.forRoot(),
     JwtModule.registerAsync({
@@ -31,6 +34,7 @@ JwtModule.register({
   providers: [
     UserUseCase,
     ProductUseCase,
+    OrderUseCase,
     {
       provide: 'UserRepository',
       useClass: UserRepository,
@@ -38,7 +42,12 @@ JwtModule.register({
     {
       provide: 'ProductRepository',
       useClass: ProductRepository,
-    }
+    },
+    {
+      provide: 'OrderRepository',
+      useClass: OrderRepository,
+    },
   ],
 })
-export class AppModule { }
+export class AppModule {}
+
