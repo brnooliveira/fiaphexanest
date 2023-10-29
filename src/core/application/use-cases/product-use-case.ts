@@ -25,8 +25,8 @@ export class ProductUseCase implements IProductUseCase {
   findById(id: string): Promise<Product> {
     return this.productRepository.findById(id);
   }
-  findByCategory(productCategory: ProductCategory): Promise<Product> {
-    throw new Error('Method not implemented.');
+  findByCategory(productCategory: ProductCategory): Promise<Product[]> {
+    return this.productRepository.findByCategory(productCategory);
   }
 
   update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
