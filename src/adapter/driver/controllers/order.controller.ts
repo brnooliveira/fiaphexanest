@@ -1,10 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -16,7 +14,7 @@ import { Order } from 'src/core/domain/entities/order';
 
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly orderUseCase: OrderUseCase) {}
+  constructor(private readonly orderUseCase: OrderUseCase) { }
 
   @Get()
   findAll(): Promise<Order[]> {
@@ -29,13 +27,13 @@ export class OrderController {
   }
 
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
-    return this.orderUseCase.create(createOrderDto);
+  async create(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
+    return await this.orderUseCase.create(createOrderDto);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto): Promise<Order> {
-    return this.orderUseCase.update(id, updateOrderDto);
+    return this.orderUseCase.update(updateOrderDto);
   }
 
   @Delete(':id')

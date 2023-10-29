@@ -1,1 +1,1 @@
-export type ProductCategory = "MEAL" | "SIDE_DISH" | "DRINK" | "DESSERT"
+export type ProductCategory = "MEAL" | "SIDE_DISH" | "DRINK" | "DESSERT";

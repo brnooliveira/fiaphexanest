@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { CreateOrderDto, UpdateOrderDto } from 'src/core/application/dtos/order.dto';
 import { Order } from 'src/core/domain/entities/order';
+import { Product } from 'src/core/domain/entities/product';
 import { IOrderRepository } from 'src/core/domain/repositories/order-repository.interface';
 import { OrderStatus } from 'src/core/domain/value-objects/order-status';
 
@@ -20,7 +22,7 @@ export class OrderRepository implements IOrderRepository {
       },
     });
 
-    return orders.map((order) => this.mapToDomain(order));
+    return null;
   }
 
   async findById(id: string): Promise<Order | null> {
@@ -36,7 +38,7 @@ export class OrderRepository implements IOrderRepository {
       return null;
     }
 
-    return this.mapToDomain(order);
+    return null;
   }
 
   async findOrderByStatus(orderStatus: OrderStatus): Promise<Order[]> {
@@ -48,20 +50,40 @@ export class OrderRepository implements IOrderRepository {
       },
     });
 
-    return orders.map((order) => this.mapToDomain(order));
+    return null;
   }
 
-  async create(order: Order): Promise<Order> {
-    const productIds = order.products.map((product) => ({ id: product.id }));
+  async create(createOrderDto: CreateOrderDto): Promise<Order> {
 
-    const createdOrder = await this.prisma.order.create({
+    console.log(createOrderDto)
+
+    const productIds = createOrderDto.productIds.map((id) => ({ id }));
+
+    const res = await this.prisma.order.create({
       data: {
-        orderStatus: order.orderStatus,
+        products: { connect: productIds },
+        user: { connect: { id: createOrderDto.userId } },
+        orderPayment: { create: {} }
+      },
+      include: {
+        products: true
+      }
+    });
+
+    const products = res.products.map(res => new Product(res.id, res.name, res.productCategory, res.price.toNumber(), res.description))
+
+    return new Order(res.userId, products, res.orderStatus, res.date, res.id);
+  }
+
+  async update(updateOrderDto: UpdateOrderDto): Promise<Order> {
+
+    const res = await this.prisma.order.update({
+      where: { id: updateOrderDto.id },
+      data: {
+        orderStatus: updateOrderDto.orderStatus,
         products: {
-          connect: productIds,
+          set: updateOrderDto.products.map((product) => ({ id: product.id })),
         },
-        date: new Date(),
-        userId: order.userId,
       },
       include: {
         products: true,
@@ -69,34 +91,13 @@ export class OrderRepository implements IOrderRepository {
       },
     });
 
-    return this.mapToDomain(createdOrder);
-  }
+    const products = res.products.map(res => new Product(res.id, res.name, res.productCategory, res.price.toNumber(), res.description))
 
-  async update(id: string, order: Order): Promise<Order> {
-    const updatedOrder = await this.prisma.order.update({
-      where: { id },
-      data: {
-        orderStatus: order.orderStatus,
-        products: {
-          set: order.products.map((product) => ({ id: product.id })),
-        },
-        date: new Date(),
-      },
-      include: {
-        products: true,
-        orderPayment: true,
-      },
-    });
-
-    return this.mapToDomain(updatedOrder);
+    return new Order(res.userId, products, res.orderStatus, res.date, res.id);
   }
 
   async delete(id: string): Promise<void> {
     await this.prisma.order.delete({ where: { id } });
-  }
-
-  private mapToDomain(order: any): Order {
-    return new Order(order.id, order.orderStatus, order.products, order.orderPayment, order.date, order.userId);
   }
 }
 

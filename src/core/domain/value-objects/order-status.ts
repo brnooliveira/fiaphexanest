@@ -1,7 +1,1 @@
-export enum OrderStatus {
-  WAITING_PAYMENT = 'WAITING_PAYMENT',
-  RECEIVED = 'RECEIVED',
-  PREPARING = 'PREPARING',
-  READY = 'READY',
-  FINISHED = 'FINISHED'
-}
+export type OrderStatus = "WAITING_PAYMENT" | "RECEIVED" | "PREPARING" | "READY" | "FINISHED";

@@ -11,16 +11,16 @@ export class Order {
   public readonly userId: string;
 
   constructor(
-    id: string,
-    orderStatus: OrderStatus,
-    products: Product[],
-    orderPayment: OrderPayment,
-    date: Date,
     userId: string,
+    products: Product[],
+    orderStatus?: OrderStatus,
+    date?: Date,
+    id?: string,
+    orderPayment?: OrderPayment,
   ) {
-    if (!id || !orderStatus || !products || !orderPayment || !date || !userId) {
-      throw new Error('Todos os campos são obrigatórios');
-    }
+    // if (!id || !orderStatus || !products || !orderPayment || !date || !userId) {
+    //   throw new Error('Todos os campos são obrigatórios');
+    // }
     this.id = id;
     this.orderStatus = orderStatus;
     this.products = products;
