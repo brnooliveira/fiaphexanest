@@ -1,9 +1,11 @@
 export class ProductImage {
-  private id: string;
-  private path: string;
+  public readonly id: string;
+  public readonly path: string;
+  public readonly productId: string;
 
-  constructor($id: string, $path: string) {
-    this.id = $id;
-    this.path = $path;
+  constructor(path: string, productId: string, id?: string, ) {
+    this.path = path;
+    this.productId = productId;
+    this.id = id;
   }
 }

@@ -11,6 +11,6 @@ export interface IProductUseCase {
   update(id: string, updateProductDto: UpdateProductDto): Promise<Product>;
   delete(id: string): Promise<void>;
   listImages(): Promise<ProductImage[]>;
-  addImage(productImage: ProductImage): Promise<Product>;
-  removeImage(id: string): Promise<Product>;
+  addImages(productImages: ProductImage[]): Promise<boolean>;
+  removeImages(ids: string[]): Promise<void>;
 }

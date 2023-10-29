@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { ProductCategory } from 'src/core/domain/value-objects/product-category';
 
 export class CreateProductDto {
@@ -13,4 +12,9 @@ export class UpdateProductDto {
   description: string | null;
   price: number | null;
   productCategory: ProductCategory | null;
+}
+
+export class AddProductImageDto {
+  path: string;
+  productId: string;
 }

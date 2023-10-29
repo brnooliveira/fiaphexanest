@@ -1,25 +1,26 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
-  Put,
+  UploadedFile,
+  UseInterceptors
 } from '@nestjs/common';
-import {
-  ApiOperation,
-  ApiResponse as ApiResponseDecorator,
-  ApiTags,
-} from '@nestjs/swagger';
 
-import { User } from '../../../core/domain/entities/user';
-import { ProductUseCase } from 'src/core/application/use-cases/product-use-case';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { join } from 'path';
 import { CreateProductDto, UpdateProductDto } from 'src/core/application/dtos/product.dto';
+import { FileUploadHelper } from 'src/core/application/helpers/file-upload.helper';
+import { ProductUseCase } from 'src/core/application/use-cases/product-use-case';
 import { Product } from 'src/core/domain/entities/product';
+import { ProductImage } from 'src/core/domain/entities/product-image';
+import { User } from '../../../core/domain/entities/user';
 
-@ApiTags('products')
 @Controller('products')
 export class ProductController {
   constructor(private readonly productUseCase: ProductUseCase) { }
@@ -35,16 +36,8 @@ export class ProductController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Cria um novo produto' })
-  @ApiResponseDecorator({
-    status: 201,
-    description: 'O produto foi criado com sucesso.',
-  })
-  @ApiResponseDecorator({ status: 400, description: 'Requisição inválida.' })
   create(@Body() createProductDto: CreateProductDto): Promise<Product> {
-    this.productUseCase.create(createProductDto);
-
-    return null;
+    return this.productUseCase.create(createProductDto);
   }
 
   @Patch(':id')
@@ -60,4 +53,43 @@ export class ProductController {
   delete(@Param('id') id: string): Promise<void> {
     return this.productUseCase.delete(id);
   }
+
+  @Post(':id/images')
+  @UseInterceptors(
+    FilesInterceptor('files', 6, FileUploadHelper.saveFileToStorage())
+  )
+  async addImages(
+    @Param('id') productId: string,
+    @UploadedFile('files') files: Array<Express.Multer.File>
+  ) {
+
+    const productImages: ProductImage[] = [];
+    const imagePaths: string[] = [];
+
+    try {
+      files.forEach(file => {
+        const imagesFolderPath = join(process.cwd(), 'uploads');
+        const fullImagePath = join(imagesFolderPath + '/' + file.filename);
+
+        imagePaths.push(fullImagePath);
+        productImages.push(new ProductImage(file.filename, productId));
+      });
+    } catch {
+      throw new InternalServerErrorException();
+    }
+
+    const createSuccess = await this.productUseCase.addImages(productImages);
+
+    if (!createSuccess) {
+      FileUploadHelper.removeFiles(imagePaths);
+      throw new BadRequestException();
+    }
+
+  }
+
+  @Delete('image/:id')
+  deleteImages(@Param('id') id: string,): Promise<void> {
+    return this.productUseCase.removeImages([id]);
+  }
+
 }

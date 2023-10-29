@@ -7,14 +7,14 @@ export class Product {
   public readonly productCategory: ProductCategory;
   public readonly price: number;
   public readonly description: string;
-  public readonly images: ProductImage[];
+  public readonly productImages: ProductImage[];
 
-  constructor($id: string, $name: string, $productCategory: ProductCategory, $price: number, $description: string, $images: ProductImage[]) {
-    this.id = $id;
-    this.name = $name;
-    this.productCategory = $productCategory;
-    this.price = $price;
-    this.description = $description;
-    this.images = $images;
+  constructor(id: string, name: string, productCategory: ProductCategory, price: number, description: string, productImages: ProductImage[]) {
+    this.id = id;
+    this.name = name;
+    this.productCategory = productCategory;
+    this.price = price;
+    this.description = description;
+    this.productImages = productImages;
   }
 }

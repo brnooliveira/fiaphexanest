@@ -2,9 +2,11 @@ import { Product } from 'src/core/domain/entities/product';
 import { ProductImage } from 'src/core/domain/entities/product-image';
 import { ProductCategory } from 'src/core/domain/value-objects/product-category';
 import { IProductUseCase } from './product-use-case.interface';
-import { CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
+import { AddProductImageDto, CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
 import { IProductRepository } from 'src/core/domain/repositories/product-repository.interface';
 import { Inject } from '@nestjs/common';
+import { FileUploadHelper } from '../helpers/file-upload.helper';
+import { join } from 'path';
 
 export class ProductUseCase implements IProductUseCase {
 
@@ -17,13 +19,11 @@ export class ProductUseCase implements IProductUseCase {
   }
 
   create(createProductDTO: CreateProductDto): Promise<Product> {
-
     return this.productRepository.create(createProductDTO);
-    throw new Error('Method not implemented.');
   }
 
   findById(id: string): Promise<Product> {
-    throw new Error('Method not implemented.');
+    return this.productRepository.findById(id);
   }
   findByCategory(productCategory: ProductCategory): Promise<Product> {
     throw new Error('Method not implemented.');
@@ -38,11 +38,25 @@ export class ProductUseCase implements IProductUseCase {
   listImages(): Promise<ProductImage[]> {
     throw new Error('Method not implemented.');
   }
-  addImage(productImage: ProductImage): Promise<Product> {
-    throw new Error('Method not implemented.');
+  addImages(productImages: ProductImage[]): Promise<boolean> {
+    const addProductImageDtos: AddProductImageDto[] = productImages.map(productImage => ({
+      path: productImage.path,
+      productId: productImage.productId
+    }));
+    return this.productRepository.addImages(addProductImageDtos);
   }
-  removeImage(id: string): Promise<Product> {
-    throw new Error('Method not implemented.');
+
+  async removeImages(ids: string[]): Promise<void> {
+
+    const productImages: ProductImage[] = await this.productRepository.removeImages(ids);
+    const imagesFolderPath = join(process.cwd(), 'uploads');
+    const imagePaths: string[] = [];
+
+    productImages.forEach(productImage => {
+      imagePaths.push(join(imagesFolderPath + '/' + productImage.path));
+    });
+    
+    FileUploadHelper.removeFiles(imagePaths);
   }
 
 }
