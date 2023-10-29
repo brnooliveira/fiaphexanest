@@ -92,4 +92,9 @@ export class ProductController {
     return this.productUseCase.removeImages([id]);
   }
 
+  @Get('by-category/:category')
+  async findByCategory(@Param('category') category: any): Promise<Product[]> {
+    return await this.productUseCase.findByCategory(category);
+  }
+
 }

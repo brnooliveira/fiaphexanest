@@ -6,7 +6,7 @@ import { CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
 export interface IProductUseCase {
   findAll(): Promise<Product[]>;
   findById(id: string): Promise<Product | null>;
-  findByCategory(productCategory: ProductCategory): Promise<Product>;
+  findByCategory(productCategory: ProductCategory): Promise<Product[]>;
   create(createProductDTO: CreateProductDto): Promise<Product>;
   update(id: string, updateProductDto: UpdateProductDto): Promise<Product>;
   delete(id: string): Promise<void>;
