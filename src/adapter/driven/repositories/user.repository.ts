@@ -12,7 +12,7 @@ export class UserRepository implements IUserRepository {
     this.prisma = new PrismaClient();
   }
   findByCpf(cpf: string): Promise<User> {
-    return this.prisma.user.findUnique({ where: { cpf } });
+    return this.prisma.user.findUnique({ where: { cpf: cpf } });
   }
 
   async findAll(): Promise<User[]> {
