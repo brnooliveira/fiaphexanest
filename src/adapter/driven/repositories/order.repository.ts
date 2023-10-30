@@ -15,14 +15,18 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async findAll(): Promise<Order[]> {
-    const orders = await this.prisma.order.findMany({
+    const res = await this.prisma.order.findMany({
       include: {
         products: true,
         orderPayment: true,
       },
     });
 
-    return null;
+    const orders: Order[] = res.map(res => {
+      const products = res.products.map(res => new Product(res.id, res.name, res.productCategory, res.price.toNumber(), res.description))
+      return new Order(res.userId, products, res.orderStatus, res.date, res.id, res.orderPayment)
+    })
+    return orders;
   }
 
   async findById(id: string): Promise<Order | null> {
