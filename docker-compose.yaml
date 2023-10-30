@@ -15,6 +15,7 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: "postgresql://postgres:fiap123@database:5432/fiap?schema=public"
+      JWT_SECRET: "fb1dfe4ac7ff13f00ea1c75fe23d895d95fc993952206207d4336af38c558f55"
     depends_on:
       - database
       - migrations

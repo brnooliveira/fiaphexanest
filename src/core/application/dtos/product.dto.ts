@@ -11,7 +11,7 @@ export class CreateProductDto {
   @ApiProperty({ description: 'Preço do produto' })
   price: number;
 
-  @ApiProperty({ description: 'Categoria do produto' })
+  @ApiProperty({ description: 'Categoria do produto', example: 'MEAL', examples: ['MEAL', 'SIDE_DISH', 'DRINK', 'DESSERT'] })
   productCategory: ProductCategory;
 }
 
