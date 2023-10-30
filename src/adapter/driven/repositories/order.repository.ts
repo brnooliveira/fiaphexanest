@@ -63,12 +63,17 @@ export class OrderRepository implements IOrderRepository {
 
     const productIds = createOrderDto.productIds.map((id) => ({ id }));
 
+    const data = {
+      products: { connect: productIds },
+      orderPayment: { create: {} }
+    }
+
+    if(createOrderDto.userId){
+      data['user'] = { connect: { id: createOrderDto.userId } }
+    }
+    
     const res = await this.prisma.order.create({
-      data: {
-        products: { connect: productIds },
-        user: { connect: { id: createOrderDto.userId } },
-        orderPayment: { create: {} }
-      },
+      data,
       include: {
         products: true
       }

@@ -6,7 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  Request,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import { CreateOrderDto, UpdateOrderDto } from 'src/core/application/dtos/order.dto';
 import { OrderUseCase } from 'src/core/application/use-cases/order-use-case';
@@ -14,7 +16,10 @@ import { Order } from 'src/core/domain/entities/order';
 
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly orderUseCase: OrderUseCase) { }
+  constructor(
+    private readonly orderUseCase: OrderUseCase,
+    private jwtService: JwtService
+  ) { }
 
   @Get()
   findAll(): Promise<Order[]> {
@@ -27,7 +32,14 @@ export class OrderController {
   }
 
   @Post()
-  async create(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
+  async create(@Body() createOrderDto: CreateOrderDto, @Request() req): Promise<Order> {
+    
+    const token: string = req.headers.authorization;
+    if(token){
+      const decodedToken = this.jwtService.decode(token.split(' ')[1]);
+      createOrderDto.userId = decodedToken['id'];
+    }
+
     return await this.orderUseCase.create(createOrderDto);
   }
 

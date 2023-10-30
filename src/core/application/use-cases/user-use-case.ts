@@ -39,7 +39,7 @@ export class UserUseCase implements IUserUseCase {
   async login(cpf: string): Promise<string> {
     const user = await this.findByCpf(cpf);
     if (user) {
-      const payload = { cpf }
+      const payload = { id: user.id, cpf }
       return await this.jwtService.signAsync(payload)
     }
     return null;
