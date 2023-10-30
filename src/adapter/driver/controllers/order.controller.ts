@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Request } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { CreateOrderDto, UpdateOrderDto } from 'src/core/application/dtos/order.dto';
 import { OrderUseCase } from 'src/core/application/use-cases/order-use-case';
@@ -35,9 +35,14 @@ export class OrderController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Criar uma nova pedido' })
-  @ApiResponse({ status: 201, description: 'Pedido criada com sucesso', type: Order })
+  @ApiOperation({ summary: 'Cria um novo pedido' })
+  @ApiResponse({ status: 201, description: 'Pedido criado com sucesso', type: Order })
   @ApiResponse({ status: 400, description: 'Requisição inválida' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Token de autenticação caso usuário deseje se identificar para realizar o pedido',
+    required: false,
+  })
   async create(@Body() createOrderDto: CreateOrderDto, @Request() req): Promise<Order> {
     const token: string = req.headers.authorization;
     if (token) {
