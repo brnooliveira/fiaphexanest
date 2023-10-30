@@ -12,7 +12,13 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto {
+  @ApiProperty({ description: 'Nome do usuário', required: false })
   name: string | null;
+
+  @ApiProperty({ description: 'Cpf do usuário', required: false })
   cpf: string | null;
+
+  @ApiProperty({ description: 'Email do usuário', required: false })
   email: string | null;
 }
+
