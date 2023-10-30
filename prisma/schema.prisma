@@ -21,14 +21,13 @@ model User {
 }
 
 model Order {
-  id             String       @id @unique @default(uuid())
-  orderStatus    OrderStatus  @default(WAITING_PAYMENT) @map("order_status")
-  products       Product[]
-  date           DateTime     @default(now())
-  userId         String?       @map("user_id")
-  user           User?         @relation(fields: [userId], references: [id])
-  orderPaymentId String       @unique @map("order_payment_id")
-  orderPayment   OrderPayment @relation(fields: [orderPaymentId], references: [id])
+  id           String        @id @unique @default(uuid())
+  orderStatus  OrderStatus   @default(WAITING_PAYMENT) @map("order_status")
+  products     Product[]
+  date         DateTime      @default(now())
+  userId       String?       @map("user_id")
+  user         User?         @relation(fields: [userId], references: [id])
+  orderPayment OrderPayment?
 
   @@map("order")
 }
@@ -48,7 +47,8 @@ model Product {
 model OrderPayment {
   id                 String             @id @unique @default(uuid())
   orderPaymentStatus OrderPaymentStatus @default(PENDING) @map("order_payment_status")
-  Order              Order?
+  orderId            String             @unique @map("order_payment_id")
+  order              Order              @relation(fields: [orderId], references: [id])
 
   @@map("order_payment")
 }
@@ -56,7 +56,7 @@ model OrderPayment {
 model ProductImage {
   id        String  @id @unique @default(uuid())
   path      String
-  productId String
+  productId String  @map("product_id")
   product   Product @relation(fields: [productId], references: [id])
 
   @@map("product_image")

@@ -30,6 +30,11 @@ export class OrderController {
   findById(@Param('id') id: string): Promise<Order | null> {
     return this.orderUseCase.findById(id);
   }
+  
+  @Get('cpf/:cpf')
+  findByUserCpf(@Param('cpf') cpf: string): Promise<Order[]> {
+    return this.orderUseCase.findByUserCpf(cpf);
+  }
 
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto, @Request() req): Promise<Order> {
@@ -55,7 +60,7 @@ export class OrderController {
 
   @Post(':id/pay')
   pay(@Param('id') orderId: string, @Body() paymentDetails: any): Promise<Order> {
-    return this.orderUseCase.pay();
+    return this.orderUseCase.pay(orderId);
   }
 }
 

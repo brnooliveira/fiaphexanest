@@ -4,9 +4,13 @@ import { IOrderUseCase } from './order-use-case.interface';
 import { IOrderRepository } from 'src/core/domain/repositories/order-repository.interface';
 import { Inject } from '@nestjs/common';
 import { CreateOrderDto, UpdateOrderDto } from '../dtos/order.dto';
+import { IOrderPaymentRepository } from 'src/core/domain/repositories/order-payment.interface';
 
 export class OrderUseCase implements IOrderUseCase {
-  constructor(@Inject('OrderRepository') private readonly orderRepository: IOrderRepository) {}
+  constructor(
+    @Inject('OrderRepository') private readonly orderRepository: IOrderRepository,
+    @Inject('OrderPaymentRepository') private readonly orderPaymentRepository: IOrderPaymentRepository,
+  ) { }
 
   findAll(): Promise<Order[]> {
     return this.orderRepository.findAll();
@@ -14,6 +18,10 @@ export class OrderUseCase implements IOrderUseCase {
 
   findById(id: string): Promise<Order | null> {
     return this.orderRepository.findById(id);
+  }
+
+  findByUserCpf(cpf: string): Promise<Order[]> {
+    return this.orderRepository.findByUserCpf(cpf);
   }
 
   findOrderByStatus(orderStatus: OrderStatus): Promise<Order[]> {
@@ -32,8 +40,8 @@ export class OrderUseCase implements IOrderUseCase {
     return this.orderRepository.delete(id);
   }
 
-  pay(): Promise<Order> {
-    throw new Error('Method not implemented.');
+  pay(orderId: string): Promise<Order> {
+    return this.orderPaymentRepository.pay(orderId)
   }
 }
 

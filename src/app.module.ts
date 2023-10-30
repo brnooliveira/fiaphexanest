@@ -11,14 +11,8 @@ import { AuthenticationController } from './adapter/driver/controllers/authentic
 import { OrderController } from './adapter/driver/controllers/order.controller';
 import { OrderUseCase } from './core/application/use-cases/order-use-case';
 import { OrderRepository } from './adapter/driven/repositories/order.repository';
+import { OrderPaymentRepository } from './adapter/driven/repositories/order-payment.repository';
 
-/*
-JwtModule.register({
-      global: true,
-      signOptions: { expiresIn: '24h' },
-      secre
-    }),
-*/
 @Module({
   controllers: [OrderController, UserController, ProductController, AuthenticationController],
   imports: [
@@ -47,7 +41,11 @@ JwtModule.register({
       provide: 'OrderRepository',
       useClass: OrderRepository,
     },
+    {
+      provide: 'OrderPaymentRepository',
+      useClass: OrderPaymentRepository,
+    },
   ],
 })
-export class AppModule {}
+export class AppModule { }
 
