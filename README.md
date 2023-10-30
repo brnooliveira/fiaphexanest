@@ -13,3 +13,6 @@ Para executar o projeto em modo de desenvolvimento, permitindo a alteração em 
 ```bash
 docker compose -f docker-compose.yaml -f docker-compose.override.dev.yaml up -d
 ```
+
+Acesse a documentação em
+[Swagger](http://localhost:3000/api-docs)

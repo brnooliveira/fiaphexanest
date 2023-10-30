@@ -15,16 +15,16 @@ export class OrderController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'Obter todas as ordens' })
-  @ApiResponse({ status: 200, description: 'Lista de ordens', type: [Order] })
+  @ApiOperation({ summary: 'Obter todas as pedidos' })
+  @ApiResponse({ status: 200, description: 'Lista de pedidos', type: [Order] })
   findAll(): Promise<Order[]> {
     return this.orderUseCase.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obter uma ordem pelo ID' })
-  @ApiResponse({ status: 200, description: 'Detalhes da ordem', type: Order })
-  @ApiResponse({ status: 404, description: 'Ordem não encontrada' })
+  @ApiOperation({ summary: 'Obter uma pedido pelo ID' })
+  @ApiResponse({ status: 200, description: 'Detalhes da pedido', type: Order })
+  @ApiResponse({ status: 404, description: 'Pedido não encontrada' })
   findById(@Param('id') id: string): Promise<Order | null> {
     return this.orderUseCase.findById(id);
   }
@@ -35,8 +35,8 @@ export class OrderController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Criar uma nova ordem' })
-  @ApiResponse({ status: 201, description: 'Ordem criada com sucesso', type: Order })
+  @ApiOperation({ summary: 'Criar uma nova pedido' })
+  @ApiResponse({ status: 201, description: 'Pedido criada com sucesso', type: Order })
   @ApiResponse({ status: 400, description: 'Requisição inválida' })
   async create(@Body() createOrderDto: CreateOrderDto, @Request() req): Promise<Order> {
     const token: string = req.headers.authorization;
@@ -49,21 +49,21 @@ export class OrderController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualizar uma ordem pelo ID' })
-  @ApiParam({ name: 'id', description: 'ID da ordem' })
-  @ApiBody({ type: UpdateOrderDto, description: 'Dados para atualizar a ordem' })
-  @ApiResponse({ status: 200, description: 'Ordem atualizada com sucesso', type: Order })
-  @ApiResponse({ status: 404, description: 'Ordem não encontrada' })
+  @ApiOperation({ summary: 'Atualizar uma pedido pelo ID' })
+  @ApiParam({ name: 'id', description: 'ID da pedido' })
+  @ApiBody({ type: UpdateOrderDto, description: 'Dados para atualizar a pedido' })
+  @ApiResponse({ status: 200, description: 'Pedido atualizada com sucesso', type: Order })
+  @ApiResponse({ status: 404, description: 'Pedido não encontrada' })
   @ApiResponse({ status: 400, description: 'Requisição inválida' })
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto): Promise<Order> {
     return this.orderUseCase.update(updateOrderDto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Deletar uma ordem pelo ID' })
-  @ApiParam({ name: 'id', description: 'ID da ordem' })
-  @ApiResponse({ status: 200, description: 'Ordem deletada com sucesso' })
-  @ApiResponse({ status: 404, description: 'Ordem não encontrada' })
+  @ApiOperation({ summary: 'Deletar uma pedido pelo ID' })
+  @ApiParam({ name: 'id', description: 'ID da pedido' })
+  @ApiResponse({ status: 200, description: 'Pedido deletada com sucesso' })
+  @ApiResponse({ status: 404, description: 'Pedido não encontrada' })
   @ApiResponse({ status: 400, description: 'Requisição inválida' })
   delete(@Param('id') id: string): Promise<void> {
     return this.orderUseCase.delete(id);
