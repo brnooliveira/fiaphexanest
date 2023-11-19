@@ -1,18 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Request } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ApiBody, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-
-import { CreateOrderDto, UpdateOrderDto } from 'src/core/application/dtos/order.dto';
-import { OrderUseCase } from 'src/core/application/use-cases/order-use-case';
-import { Order } from 'src/core/domain/entities/order';
+import { DeleteResult } from 'typeorm';
+import { ORDER_USE_CASE } from '../../../core/application/constants/tokens';
+import { CreateOrderDto, UpdateOrderDto } from '../../../core/application/dtos/order.dto';
+import { IOrderUseCase } from '../../../core/application/use-cases/order-use-case.interface';
+import { Order } from '../../../core/domain/entities/order';
 
 @ApiTags('orders')
 @Controller('orders')
 export class OrderController {
   constructor(
-    private readonly orderUseCase: OrderUseCase,
+    @Inject(ORDER_USE_CASE) private readonly orderUseCase: IOrderUseCase,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOperation({ summary: 'Obter todas as pedidos' })
@@ -70,7 +71,7 @@ export class OrderController {
   @ApiResponse({ status: 200, description: 'Pedido deletada com sucesso' })
   @ApiResponse({ status: 404, description: 'Pedido não encontrada' })
   @ApiResponse({ status: 400, description: 'Requisição inválida' })
-  delete(@Param('id') id: string): Promise<void> {
+  delete(@Param('id') id: string): Promise<DeleteResult> {
     return this.orderUseCase.delete(id);
   }
 

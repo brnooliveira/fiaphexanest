@@ -21,4 +21,3 @@ export class UpdateUserDto {
   @ApiProperty({ description: 'Email do usuário', required: false })
   email: string | null;
 }
-

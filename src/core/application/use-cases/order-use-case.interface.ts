@@ -1,5 +1,6 @@
-import { Order } from 'src/core/domain/entities/order';
-import { OrderStatus } from 'src/core/domain/value-objects/order-status';
+import { DeleteResult } from 'typeorm';
+import { Order } from '../../domain/entities/order';
+import { OrderStatus } from '../../domain/value-objects/order-status';
 import { CreateOrderDto, UpdateOrderDto } from '../dtos/order.dto';
 
 export interface IOrderUseCase {
@@ -9,6 +10,6 @@ export interface IOrderUseCase {
   findOrderByStatus(orderStatus: OrderStatus): Promise<Order[]>;
   create(createOrderDto: CreateOrderDto): Promise<Order>;
   update(updateOrderDto: UpdateOrderDto): Promise<Order>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<DeleteResult>;
   pay(orderId: string): Promise<Order>;
 }

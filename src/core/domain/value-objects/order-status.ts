@@ -1,1 +1,1 @@
-export type OrderStatus = "WAITING_PAYMENT" | "RECEIVED" | "PREPARING" | "READY" | "FINISHED";
+export type OrderStatus = 'WAITING_PAYMENT' | 'RECEIVED' | 'PREPARING' | 'READY' | 'FINISHED';

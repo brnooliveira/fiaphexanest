@@ -1,6 +1,7 @@
-import { Body, Controller, HttpCode, Post, UnauthorizedException } from '@nestjs/common';
-import { UserUseCase } from '../../../core/application/use-cases/user-use-case';
+import { Body, Controller, HttpCode, Inject, Post, UnauthorizedException } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { IUserUseCase } from '../../../core/application/use-cases/user-use-case.interface';
+import { USER_USE_CASE } from '../../../core/application/constants/tokens';
 
 class LoginDto {
   @ApiProperty({ description: 'CPF do usuário' })
@@ -15,7 +16,7 @@ class TokenDto {
 @ApiTags('authentication')
 @Controller('authentication')
 export class AuthenticationController {
-  constructor(private readonly userUseCase: UserUseCase) {}
+  constructor(@Inject(USER_USE_CASE) private readonly userUseCase: IUserUseCase) { }
 
   @Post('login')
   @HttpCode(200)

@@ -1,14 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiResponse as ApiResponseDecorator, ApiTags, ApiBody, ApiParam } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse as ApiResponseDecorator, ApiTags } from '@nestjs/swagger';
+import { DeleteResult } from 'typeorm';
+import { USER_USE_CASE } from '../../../core/application/constants/tokens';
 import { CreateUserDto, UpdateUserDto } from '../../../core/application/dtos/user.dto';
-import { UserUseCase } from '../../../core/application/use-cases/user-use-case';
-
+import { IUserUseCase } from '../../../core/application/use-cases/user-use-case.interface';
 import { User } from '../../../core/domain/entities/user';
 
 @ApiTags('users')
 @Controller('users')
 export class UserController {
-  constructor(private readonly userUseCase: UserUseCase) {}
+  constructor(@Inject(USER_USE_CASE) private readonly userUseCase: IUserUseCase) { }
 
   @Get()
   @ApiOperation({ summary: 'Obter todos os usuários' })
@@ -63,7 +64,7 @@ export class UserController {
   @ApiResponseDecorator({ status: 200, description: 'Usuário deletado com sucesso' })
   @ApiResponseDecorator({ status: 404, description: 'Usuário não encontrado' })
   @ApiResponseDecorator({ status: 400, description: 'Requisição inválida' })
-  delete(@Param('id') id: string): Promise<void> {
+  delete(@Param('id') id: string): Promise<DeleteResult> {
     return this.userUseCase.delete(id);
   }
 }

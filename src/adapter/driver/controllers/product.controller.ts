@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   InternalServerErrorException,
   Param,
   Patch,
@@ -13,19 +14,19 @@ import {
 } from '@nestjs/common';
 
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { join } from 'path';
-import { CreateProductDto, UpdateProductDto } from 'src/core/application/dtos/product.dto';
-import { FileUploadHelper } from 'src/core/application/helpers/file-upload.helper';
-import { ProductUseCase } from 'src/core/application/use-cases/product-use-case';
-import { Product } from 'src/core/domain/entities/product';
-import { ProductImage } from 'src/core/domain/entities/product-image';
-import { User } from '../../../core/domain/entities/user';
-import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
+import { DeleteResult } from 'typeorm';
+import { PRODUCT_USE_CASE } from '../../../core/application/constants/tokens';
+import { CreateProductDto, UpdateProductDto } from '../../../core/application/dtos/product.dto';
+import { FileUploadHelper } from '../../../core/application/helpers/file-upload.helper';
+import { IProductUseCase } from '../../../core/application/use-cases/product-use-case.interface';
+import { Product } from '../../../core/domain/entities/product';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productUseCase: ProductUseCase) {}
+  constructor(@Inject(PRODUCT_USE_CASE) private readonly productUseCase: IProductUseCase) { }
 
   @Get()
   @ApiOperation({ summary: 'Obter todos os produtos' })
@@ -57,9 +58,8 @@ export class ProductController {
   @ApiBody({ type: UpdateProductDto })
   @ApiResponse({ status: 200, description: 'Produto atualizado com sucesso', type: Product })
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<User> {
-    throw new Error('Not implemented yet');
-    //return this.productUseCase.update(id, updateProductDto);
+  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<Product> {
+    return this.productUseCase.update(id, updateProductDto);
   }
 
   @Delete(':id')
@@ -67,29 +67,28 @@ export class ProductController {
   @ApiParam({ name: 'id', description: 'ID do produto' })
   @ApiResponse({ status: 200, description: 'Produto deletado com sucesso' })
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
-  delete(@Param('id') id: string): Promise<void> {
+  delete(@Param('id') id: string): Promise<DeleteResult> {
     return this.productUseCase.delete(id);
   }
 
   @Post(':id/images')
   @UseInterceptors(FilesInterceptor('files', 6, FileUploadHelper.saveFileToStorage()))
   async addImages(@Param('id') productId: string, @UploadedFile('files') files: Array<Express.Multer.File>) {
-    const productImages: ProductImage[] = [];
     const imagePaths: string[] = [];
+    let fileNames: string[] = [];
 
     try {
       files.forEach((file) => {
         const imagesFolderPath = join(process.cwd(), 'uploads');
         const fullImagePath = join(imagesFolderPath + '/' + file.filename);
-
+        fileNames.push(file.filename);
         imagePaths.push(fullImagePath);
-        productImages.push(new ProductImage(file.filename, productId));
       });
     } catch {
       throw new InternalServerErrorException();
     }
 
-    const createSuccess = await this.productUseCase.addImages(productImages);
+    const createSuccess = await this.productUseCase.addImages(productId, fileNames);
 
     if (!createSuccess) {
       FileUploadHelper.removeFiles(imagePaths);
@@ -98,8 +97,8 @@ export class ProductController {
   }
 
   @Delete('image/:id')
-  deleteImages(@Param('id') id: string): Promise<void> {
-    return this.productUseCase.removeImages([id]);
+  deleteImages(@Param('productId') productId: string, @Param('imageIds') imageIds: string[]): Promise<void> {
+    return this.productUseCase.removeImages(productId, imageIds);
   }
 
   @Get('by-category/:category')
