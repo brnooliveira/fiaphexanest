@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProductCategory } from 'src/core/domain/value-objects/product-category';
+import { ProductCategory } from '../../domain/value-objects/product-category';
 
 export class CreateProductDto {
   @ApiProperty({ description: 'Nome do produto' })
@@ -30,10 +30,11 @@ export class UpdateProductDto {
 }
 
 export class AddProductImageDto {
-  @ApiProperty({ description: 'Caminho da imagem' })
-  path: string;
 
   @ApiProperty({ description: 'ID do produto' })
   productId: string;
-}
 
+  @ApiProperty({ description: 'Caminho da imagem' })
+  paths: string[];
+
+}

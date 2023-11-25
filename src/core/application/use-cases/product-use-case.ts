@@ -1,62 +1,77 @@
-import { Product } from 'src/core/domain/entities/product';
-import { ProductImage } from 'src/core/domain/entities/product-image';
-import { ProductCategory } from 'src/core/domain/value-objects/product-category';
-import { IProductUseCase } from './product-use-case.interface';
-import { AddProductImageDto, CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
-import { IProductRepository } from 'src/core/domain/repositories/product-repository.interface';
 import { Inject } from '@nestjs/common';
-import { FileUploadHelper } from '../helpers/file-upload.helper';
 import { join } from 'path';
+import { DeleteResult } from 'typeorm';
+import { Product } from '../../domain/entities/product';
+import { ProductImage } from '../../domain/entities/product-image';
+import { IProductRepository } from '../../domain/repositories/product-repository.interface';
+import { ProductCategory } from '../../domain/value-objects/product-category';
+import { CreateProductDto, UpdateProductDto } from '../dtos/product.dto';
+import { FileUploadHelper } from '../helpers/file-upload.helper';
+import { IProductUseCase } from './product-use-case.interface';
+import { DomainHelper } from '../helpers/domain.helper';
+import { PRODUCT_REPOSITORY } from '../constants/tokens';
 
 export class ProductUseCase implements IProductUseCase {
 
   constructor(
-    @Inject('ProductRepository') private readonly productRepository: IProductRepository,
+    @Inject(PRODUCT_REPOSITORY) private readonly productRepository: IProductRepository,
   ) { }
 
   findAll(): Promise<Product[]> {
-    return this.productRepository.findAll();
+    return this.productRepository.find();
   }
 
   create(createProductDTO: CreateProductDto): Promise<Product> {
-    return this.productRepository.create(createProductDTO);
+    const product: Product = new Product(
+      createProductDTO.name,
+      createProductDTO.productCategory,
+      createProductDTO.price,
+      createProductDTO.description
+    );
+    return this.productRepository.save(product);
   }
 
   findById(id: string): Promise<Product> {
-    return this.productRepository.findById(id);
+    return this.productRepository.findOneBy({ id });
   }
+
   findByCategory(productCategory: ProductCategory): Promise<Product[]> {
-    return this.productRepository.findByCategory(productCategory);
+    return this.productRepository.findBy({ productCategory });
   }
 
-  update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
-    throw new Error('Method not implemented.');
-  }
-  delete(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  listImages(): Promise<ProductImage[]> {
-    throw new Error('Method not implemented.');
-  }
-  addImages(productImages: ProductImage[]): Promise<boolean> {
-    const addProductImageDtos: AddProductImageDto[] = productImages.map(productImage => ({
-      path: productImage.path,
-      productId: productImage.productId
-    }));
-    return this.productRepository.addImages(addProductImageDtos);
+  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+    const user: Product = await this.productRepository.findOneBy({ id });
+
+    if (user) {
+      DomainHelper.updateEntity(user, updateProductDto);
+      return this.productRepository.save(user);
+    }
+    return null;
   }
 
-  async removeImages(ids: string[]): Promise<void> {
+  delete(id: string): Promise<DeleteResult> {
+    return this.delete(id);
+  }
 
-    const productImages: ProductImage[] = await this.productRepository.removeImages(ids);
+  async addImages(productId: string, filePaths: string[]): Promise<Product> {
+
+    const product: Product = await this.productRepository.findOneBy({ id: productId });
+
+    if (product) {
+      const productImages: ProductImage[] = filePaths.map(filePath => new ProductImage(filePath, product));
+      return this.productRepository.addImages(productId, productImages);
+    }
+
+    return null;
+  }
+
+  async removeImages(productId: string, imageIds: string[]): Promise<void> {
+
+    const imagePaths = await this.productRepository.removeImages(productId, imageIds);
     const imagesFolderPath = join(process.cwd(), 'uploads');
-    const imagePaths: string[] = [];
+    const fullFilePaths = imagePaths.map(imagePath => join(imagesFolderPath + '/' + imagePath));
 
-    productImages.forEach(productImage => {
-      imagePaths.push(join(imagesFolderPath + '/' + productImage.path));
-    });
-    
-    FileUploadHelper.removeFiles(imagePaths);
+    FileUploadHelper.removeFiles(fullFilePaths);
   }
 
 }
