@@ -1,4 +1,5 @@
-import { User } from 'src/core/domain/entities/user';
+import { DeleteResult } from 'typeorm';
+import { User } from '../../domain/entities/user';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 
 export interface IUserUseCase {
@@ -7,6 +8,6 @@ export interface IUserUseCase {
   findByCpf(cpf: string): Promise<User | null>;
   create(user: CreateUserDto): Promise<User>;
   update(id: string, updateUserDto: UpdateUserDto): Promise<User>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<DeleteResult>;
   login(cpf: string): Promise<string>;
 }
