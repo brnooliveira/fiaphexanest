@@ -14,22 +14,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: "postgresql://postgres:fiap123@database:5432/fiap?schema=public"
       JWT_SECRET: "fb1dfe4ac7ff13f00ea1c75fe23d895d95fc993952206207d4336af38c558f55"
     depends_on:
       - database
-      - migrations
     restart: on-failure
-  migrations:
-    build:
-      context: .
-      dockerfile: ./docker/app.dockerfile
-      target: prisma-migrate
-    entrypoint: ["npx", "prisma", "db", "push"]
-    depends_on:
-      - database
-    restart: on-failure
-    environment:
-      DATABASE_URL: "postgresql://postgres:fiap123@database:5432/fiap?schema=public"
     #web:
   #  image: nginx
