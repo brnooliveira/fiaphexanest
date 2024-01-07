@@ -24,6 +24,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: grupo61/tech-challenge:latest, grupo61/tech-challenge:${{ steps.extract_version.outputs.version }}
+          tags: cviniciussdias/grupo61:latest, cviniciussdias/grupo61:${{ steps.extract_version.outputs.version }}
           file: "docker/app.dockerfile"
 
