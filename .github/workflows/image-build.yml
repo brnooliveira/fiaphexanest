@@ -13,8 +13,8 @@ jobs:
       - name: Fazer login no Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: cviniciussdias
+          password: "dckr_pat_F-7t5AZ5yJfIwnh8M1dLBRW2BEI"
 
       - name: Extrair versão da tag
         id: extract_version
