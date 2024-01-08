@@ -11,7 +11,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./docker/app.dockerfile
+      dockerfile: ./infra/app.dockerfile
       target: production
     ports:
       - "3000:3000"

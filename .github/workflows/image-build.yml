@@ -26,4 +26,4 @@ jobs:
           push: true
           tags: cviniciussdias/grupo61:latest, cviniciussdias/grupo61:${{ steps.extract_version.outputs.version }}
           file: "docker/app.dockerfile"
-
+          target: production
